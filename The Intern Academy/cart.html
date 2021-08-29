@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="css/cart.css">
+
+</head>
+
+<h1>Shopping Cart</h1>
+
+<div class="shopping-cart">
+
+  <div class="column-labels">
+    <label class="product-image">Image</label>
+    <label class="product-details">Product</label>
+    <label class="product-price">Price</label>
+    <label class="product-quantity">Quantity</label>
+    <label class="product-removal">Remove</label>
+    <label class="product-line-price">Total</label>
+  </div>
+
+  <div class="product">
+    <div class="product-image">
+      <img src="Images/pic-1.jpg">
+    </div>
+    <div class="product-details">
+      <div class="product-title">Product Code: IRSC2019</div>
+      <p class="product-description">US Polo Association Men's Solid Regular Fit Polo </p>
+    </div>
+    <div class="product-price">350</div>
+    <div class="product-quantity">
+      <input type="number" value="1" min="1">
+    </div>
+    <div class="product-removal">
+      <button class="remove-product">
+        Remove
+      </button>
+    </div>
+    <div class="product-line-price">350</div>
+  </div>
+
+  
+  <div class="totals">
+    <div class="totals-item">
+      <label>Subtotal</label>
+      <div class="totals-value" id="cart-subtotal">350</div>
+    </div>
+    <div class="totals-item">
+      <label>Tax (5%)</label>
+      <div class="totals-value" id="cart-tax">3.60</div>
+    </div>
+    <div class="totals-item">
+      <label>Shipping</label>
+      <div class="totals-value" id="cart-shipping">15.00</div>
+    </div>
+    <div class="totals-item totals-item-total">
+      <label>Grand Total</label>
+      <div class="totals-value" id="cart-total">368.6</div>
+    </div>
+  </div>
+      <a href="checkout.html">
+      <button class="checkout">Checkout</button></a>
+
+</div>
+</html>
+
+
+<script>
+  /* Set rates + misc */
+var taxRate = 0.05;
+var shippingRate = 15.0;
+var fadeTime = 300;
+
+/* Assign actions */
+$(".product-quantity input").change(function () {
+  updateQuantity(this);
+});
+
+$(".product-removal button").click(function () {
+  removeItem(this);
+});
+
+/* Recalculate cart */
+function recalculateCart() {
+  var subtotal = 0;
+
+  /* Sum up row totals */
+  (".product").each(function () {
+    subtotal += parseFloat($(this).children(".product-line-price").text());
+  });
+
+  /* Calculate totals */
+  var tax = subtotal * taxRate;
+  var shipping = subtotal > 0 ? shippingRate : 0;
+  var total = subtotal + tax + shipping;
+
+  /* Update totals display */
+  (".totals-value").fadeOut(fadeTime, function () {
+    ("#cart-subtotal").html(subtotal.toFixed(2));
+    ("#cart-tax").html(tax.toFixed(2));
+    ("#cart-shipping").html(shipping.toFixed(2));
+    ("#cart-total").html(total.toFixed(2));
+    if (total == 0) {
+      (".checkout").fadeOut(fadeTime);
+    } else {
+      (".checkout").fadeIn(fadeTime);
+    }
+    (".totals-value").fadeIn(fadeTime);
+  });
+}
+
+/* Update quantity */
+function updateQuantity(quantityInput) {
+  /* Calculate line price */
+  var productRow = $(quantityInput).parent().parent();
+  var price = parseFloat(productRow.children(".product-price").text());
+  var quantity = $(quantityInput).val();
+  var linePrice = price * quantity;
+
+  /* Update line price display and recalc cart totals */
+  productRow.children(".product-line-price").each(function () {
+    $(this).fadeOut(fadeTime, function () {
+      $(this).text(linePrice.toFixed(2));
+      recalculateCart();
+      $(this).fadeIn(fadeTime);
+    });
+  });
+}
+
+/* Remove item from cart */
+function removeItem(removeButton) {
+  /* Remove row from DOM and recalc cart total */
+  var productRow = $(removeButton).parent().parent();
+  productRow.slideUp(fadeTime, function () {
+    productRow.remove();
+    recalculateCart();
+  });
+}
+
+</script>
+
+
+
+
